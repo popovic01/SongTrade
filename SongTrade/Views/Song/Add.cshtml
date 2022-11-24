@@ -1,0 +1,36 @@
+﻿@model SongTrade.Models.Song
+
+<form method="post">
+    <div class="form-group">
+    <label asp-for="Title"></label>
+    <input class="form-control" asp-for="Title">
+    <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-2">
+    <label asp-for="Price"></label>
+    <input asp-for="Price" class="form-control">
+    <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-2">
+        <label asp-for="Lyrics"></label>
+        <textarea asp-for="Lyrics" class="form-control" rows="10"></textarea>
+        <span asp-validation-for="Lyrics" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-2 col-2">
+        <label asp-for="Published"></label>
+        <input asp-for ="Published" class="form-control" type="date">
+        <span asp-validation-for="Published" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-outline-dark">Submit</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
+        Cancel
+    </a>
+</form>
+
+@*validation on client side*@
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
