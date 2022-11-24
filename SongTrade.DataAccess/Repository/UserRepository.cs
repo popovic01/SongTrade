@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace SongTrade.DataAccess.Repository
 {
-    public class AuthorRepository : Repository<Author>, IAuthorRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
         private readonly ApplicationDbContext _db;
-        public AuthorRepository(ApplicationDbContext db) : base(db)
+        public UserRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Update(Author author)
+        public void Update(User user)
         {
-            _db.Authors.Update(author);
+            _db.Users.Update(user);
         }
     }
 }

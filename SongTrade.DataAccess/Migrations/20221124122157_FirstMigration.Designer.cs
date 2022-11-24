@@ -12,7 +12,7 @@ using SongTrade.DataAccess.Data;
 namespace SongTrade.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221123083845_FirstMigration")]
+    [Migration("20221124122157_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -25,44 +25,6 @@ namespace SongTrade.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SongTrade.Models.Author", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Authors");
-                });
-
-            modelBuilder.Entity("SongTrade.Models.Buyer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Buyers");
-                });
-
             modelBuilder.Entity("SongTrade.Models.Song", b =>
                 {
                     b.Property<int>("Id")
@@ -70,12 +32,6 @@ namespace SongTrade.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("BuyerId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Lyrics")
                         .IsRequired()
@@ -91,38 +47,54 @@ namespace SongTrade.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("BuyerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Songs");
                 });
 
+            modelBuilder.Entity("SongTrade.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("TypeOfUser")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("SongTrade.Models.Song", b =>
                 {
-                    b.HasOne("SongTrade.Models.Author", "Author")
-                        .WithMany("Songs")
-                        .HasForeignKey("AuthorId")
+                    b.HasOne("SongTrade.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SongTrade.Models.Buyer", null)
-                        .WithMany("Songs")
-                        .HasForeignKey("BuyerId");
-
-                    b.Navigation("Author");
-                });
-
-            modelBuilder.Entity("SongTrade.Models.Author", b =>
-                {
-                    b.Navigation("Songs");
-                });
-
-            modelBuilder.Entity("SongTrade.Models.Buyer", b =>
-                {
-                    b.Navigation("Songs");
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

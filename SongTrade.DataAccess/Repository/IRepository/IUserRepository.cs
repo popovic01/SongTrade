@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace SongTrade.DataAccess.Repository.IRepository
 {
-    public interface IAuthorRepository : IRepository<Author>
+    public interface IUserRepository : IRepository<User>
     {
-        void Update(Author author);
+        void Update(User author);
     }
 }

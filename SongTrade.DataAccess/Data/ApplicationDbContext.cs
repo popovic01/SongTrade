@@ -16,7 +16,6 @@ namespace SongTrade.DataAccess.Data
         }
 
         public DbSet<Song> Songs { get; set; }
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<Buyer> Buyers { get; set; }
+        public DbSet<User> Users{ get; set; }
     }
 }

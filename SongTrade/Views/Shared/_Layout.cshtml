@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -31,10 +34,19 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My Songs</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item text-dark" asp-controller="Song" asp-action="Add">Add Song</a>
-                                <a class="dropdown-item text-dark" asp-controller="Song" asp-action="GetByUser">My Songs</a>
-                            </div>
+                            @if (HttpContextAccessor.HttpContext.Session.GetString("Role") == "author")
+                            {
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item text-dark" asp-controller="Song" asp-action="Add">Add Song</a>
+                                    <a class="dropdown-item text-dark" asp-controller="Song" asp-action="GetByUser">My Songs</a>
+                                </div>
+                            }
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Auth" asp-action="Index">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
                         </li>
                     </ul>
                 </div>

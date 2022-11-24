@@ -4,12 +4,11 @@
     @foreach (var song in Model)
     {
         <div class="card m-2" style="width: 18rem;">
-            <img class="card-img-top" src="@song.Author.ImageUrl" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title">@song.Title</h5>
                 <p class="card-text">
-                    Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@song.AuthorId"
-                           class="card-link mb-2">@song.Author.Name</a>
+                    Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@song.UserId"
+                           class="card-link mb-2">@song.User.Username</a>
                 </p>
                 @if (song.Lyrics.Length < 200)
                 {

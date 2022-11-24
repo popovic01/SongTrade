@@ -20,8 +20,8 @@ namespace SongTrade.Models
         public DateTime Published { get; set; }
         [Required]
         [Display(Name = "Author")]
-        public int AuthorId { get; set; }
+        public int UserId { get; set; }
         [ValidateNever]
-        public Author Author { get; set; }
+        public User User { get; set; }
     }
 }
