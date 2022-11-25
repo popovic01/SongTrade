@@ -9,5 +9,6 @@ namespace SongTrade.Utility
     public static class StaticDetails
     {
         public const string UserToken = "SessionUserToken";
+        public const string Role = "Role";
     }
 }

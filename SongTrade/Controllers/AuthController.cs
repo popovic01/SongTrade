@@ -4,9 +4,9 @@ using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
 using SongTrade.Utility;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Web.Mvc;
+using System.Security.Cryptography;using System.Text;
 using Controller = Microsoft.AspNetCore.Mvc.Controller;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using ValidateAntiForgeryTokenAttribute = Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute;
@@ -40,7 +40,9 @@ namespace SongTrade.Controllers
 
             if (userFromDb != null)
             {
-                throw new Exception();
+                ModelState.AddModelError("Username.Name", "Username already exists");
+                TempData["error"] = "Username already exists";
+                return View(request);
             }
 
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -53,6 +55,12 @@ namespace SongTrade.Controllers
 
             _userRepo.Add(user);
             _userRepo.Save();
+
+            string token = CreateToken(user);
+            HttpContext.Session.SetString(StaticDetails.UserToken, token);
+            HttpContext.Session.SetString(StaticDetails.Role, user.TypeOfUser);
+
+            TempData["success"] = "You register successfully";
 
             return RedirectToAction("Index", "Home");
         }
@@ -73,11 +81,21 @@ namespace SongTrade.Controllers
                 if (VerifyPasswordHash(request.Password, userFromDb.PasswordHash, userFromDb.PasswordSalt))
                 {
                     string token = CreateToken(userFromDb);
-                    //adding token to session
                     HttpContext.Session.SetString(StaticDetails.UserToken, token);
+                    HttpContext.Session.SetString(StaticDetails.Role, userFromDb.TypeOfUser);
+
+                    TempData["success"] = "You logged in successfully";
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
+            return View(request);
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            TempData["success"] = "You logged out successfully";
             return RedirectToAction("Index", "Home");
         }
 
@@ -90,7 +108,7 @@ namespace SongTrade.Controllers
                 new Claim("Role", user.TypeOfUser)
             }; 
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 _config.GetSection("Jwt:Token").Value)); //key from appsettings.json
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
@@ -105,12 +123,45 @@ namespace SongTrade.Controllers
             return jwt;
         }
 
+        private bool ValidateCurrentToken(string token)
+        {
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _config.GetSection("Jwt:Token").Value)); //key from appsettings.json
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    IssuerSigningKey = key
+                }, out SecurityToken validatedToken);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public string GetClaim(string token, string claimType)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            var ClaimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
+            return ClaimValue;
+        }
+
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             using (var hmac = new HMACSHA512())
             {
                 passwordSalt = hmac.Key; 
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
             }
         }
 
@@ -118,7 +169,7 @@ namespace SongTrade.Controllers
         {
             using (var hmac = new HMACSHA512(passwordSalt))
             {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash); //comparing saved and computer hash
             }
         }

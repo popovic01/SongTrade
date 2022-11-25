@@ -16,6 +16,7 @@ namespace SongTrade.Models
         public string Username { get; set; }
         [Required]
         public string Password { get; set; }
+        [Display(Name = "Type of User")]
         public string TypesOfUser { get; set; }
     }
 }

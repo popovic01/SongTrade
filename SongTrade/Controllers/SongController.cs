@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using SongTrade.Authorization;
 using SongTrade.DataAccess.Data;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
@@ -20,22 +21,17 @@ namespace SongTrade.Controllers
             _userRepo = userRepo;
         }
 
+        [AuthRole("Role", "buyer")]
         public IActionResult Index()
         {
             IEnumerable<Song> songs = _songRepo.GetAll(includeProperties: "User");
             return View(songs);
         }
 
-        //[Authorize]
+        [AuthRole("Role", "author")]
         public IActionResult Add()
         {
-            string token = HttpContext.Session.GetString(StaticDetails.UserToken); //get token from session
-            var decodedToken = new JwtSecurityToken(jwtEncodedString: token); //decoding token
-            string role = decodedToken.Claims.First(c => c.Type == "Role").Value; //get role of logged user
-            HttpContext.Session.SetString("Role", role);
-            if (role == "author")
-                return View();
-            return RedirectToAction("NotAuthorized");
+            return View();
         }
 
         public IActionResult NotAuthorized()
