@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using SongTrade.Auth;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
 using SongTrade.Utility;
@@ -16,12 +17,14 @@ namespace SongTrade.Controllers
     public class AuthController : Controller
     {
         private readonly IUserRepository _userRepo;
-        private readonly IConfiguration _config;
+        private readonly IAuthService _auth;
+        //private readonly IConfiguration _config;
 
-        public AuthController(IConfiguration config, IUserRepository userRepo)
+        public AuthController(IAuthService auth, IUserRepository userRepo)
         {
-            _config = config;
+            //_config = config;
             _userRepo = userRepo;
+            _auth = auth;
         }
 
         //register
@@ -44,7 +47,7 @@ namespace SongTrade.Controllers
                 return View(request);
             }
 
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            _auth.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             User user = new User();
             user.TypeOfUser = request.TypesOfUser;
@@ -56,10 +59,10 @@ namespace SongTrade.Controllers
             _userRepo.Add(user);
             _userRepo.Save();
 
-            string token = CreateToken(user);
+            string token = _auth.CreateToken(user);
             HttpContext.Session.SetString(StaticDetails.UserToken, token);
             HttpContext.Session.SetString(StaticDetails.Role, user.TypeOfUser);
-            HttpContext.Session.SetString("UserId", user.Id.ToString());
+            HttpContext.Session.SetString(StaticDetails.UserId, user.Id.ToString());
 
             TempData["success"] = "You register successfully";
 
@@ -79,12 +82,12 @@ namespace SongTrade.Controllers
 
             if (userFromDb != null)
             {
-                if (VerifyPasswordHash(request.Password, userFromDb.PasswordHash, userFromDb.PasswordSalt))
+                if (_auth.VerifyPasswordHash(request.Password, userFromDb.PasswordHash, userFromDb.PasswordSalt))
                 {
-                    string token = CreateToken(userFromDb);
+                    string token = _auth.CreateToken(userFromDb);
                     HttpContext.Session.SetString(StaticDetails.UserToken, token);
                     HttpContext.Session.SetString(StaticDetails.Role, userFromDb.TypeOfUser);
-                    HttpContext.Session.SetString("UserId", userFromDb.Id.ToString());
+                    HttpContext.Session.SetString(StaticDetails.UserId, userFromDb.Id.ToString());
 
                     TempData["success"] = "You logged in successfully";
                     return RedirectToAction("Index", "Home");
@@ -104,48 +107,6 @@ namespace SongTrade.Controllers
             TempData["success"] = "You logged out successfully";
             return RedirectToAction("Index", "Home");
         }
-
-        private string CreateToken(User user)
-        {
-            //properties for token
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim("Role", user.TypeOfUser),
-                new Claim("UserId", user.Id.ToString())
-            }; 
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                _config.GetSection("Jwt:Token").Value)); //key from appsettings.json
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds);
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return jwt;
-        }
-
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key; 
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash); //comparing saved and computer hash
-            }
-        }
+ 
     }
 }

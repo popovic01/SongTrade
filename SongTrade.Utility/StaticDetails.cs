@@ -10,5 +10,6 @@ namespace SongTrade.Utility
     {
         public const string UserToken = "SessionUserToken";
         public const string Role = "Role";
+        public const string UserId = "UserId";
     }
 }

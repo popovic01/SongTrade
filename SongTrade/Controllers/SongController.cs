@@ -33,7 +33,7 @@ namespace SongTrade.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Add(Song song)
         {
-            var userId = HttpContext.Session.GetString("UserId");
+            var userId = HttpContext.Session.GetString(StaticDetails.UserId);
             song.UserId = int.Parse(userId);
             _songRepo.Add(song);
             _songRepo.Save();
