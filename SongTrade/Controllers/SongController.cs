@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using SongTrade.Authorization;
-using SongTrade.DataAccess.Data;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
 using SongTrade.Utility;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace SongTrade.Controllers
 {
@@ -21,7 +17,6 @@ namespace SongTrade.Controllers
             _userRepo = userRepo;
         }
 
-        [AuthRole("Role", "buyer")]
         public IActionResult Index()
         {
             IEnumerable<Song> songs = _songRepo.GetAll(includeProperties: "User");
@@ -34,20 +29,34 @@ namespace SongTrade.Controllers
             return View();
         }
 
-        public IActionResult NotAuthorized()
-        {
-            return View();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Add(Song song)
         {
-            song.UserId = 2;
+            var userId = HttpContext.Session.GetString("UserId");
+            song.UserId = int.Parse(userId);
             _songRepo.Add(song);
             _songRepo.Save();
 
             return RedirectToAction("Index", "Home"); //modify later
+        }
+
+        [AuthRole("Role", "author")]
+        public IActionResult GetByUser(string userId)
+        {
+            IEnumerable<Song> songs = _songRepo.GetAll(s => s.UserId == int.Parse(userId), includeProperties: "User");
+            return View(songs);
+        }
+
+        public IActionResult Details(int songId)
+        {
+            var songFromDb = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User");
+            return View(songFromDb);
+        }
+
+        public IActionResult NotAuthorized()
+        {
+            return View();
         }
     }
 }

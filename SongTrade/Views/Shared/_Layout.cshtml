@@ -30,16 +30,19 @@
                                 <a class="nav-link text-dark" asp-controller="Song" asp-action="Index">Find Songs</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="">Sell Songs</a>
-                        </li>
+                        @if (Context.Session.GetString("Role") == null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Sell Songs</a>
+                            </li>
+                        }
                         @if (Context.Session.GetString("Role") == "author")
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My Songs</a>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item text-dark" asp-controller="Song" asp-action="Add">Add Song</a>
-                                    <a class="dropdown-item text-dark" asp-controller="Song" asp-action="GetByUser">My Songs</a>
+                                    <a class="dropdown-item text-dark" asp-controller="Song" asp-action="GetByUser" asp-route-userId="@Context.Session.GetString("UserId")">My Songs</a>
                                 </div>
                             </li>
                         }

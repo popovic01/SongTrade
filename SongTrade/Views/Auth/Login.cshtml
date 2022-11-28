@@ -1,4 +1,7 @@
 ﻿@model SongTrade.Models.UserDto
+@Html.ValidationMessage("User.Password")
+
+<span data-error-message="Error message" class="field-validation-error"></span>
 
 <form method="post">
     <div class="form-group">

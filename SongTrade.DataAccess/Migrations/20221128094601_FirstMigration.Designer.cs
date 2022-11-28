@@ -12,7 +12,7 @@ using SongTrade.DataAccess.Data;
 namespace SongTrade.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221124122157_FirstMigration")]
+    [Migration("20221128094601_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -64,6 +64,10 @@ namespace SongTrade.DataAccess.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()

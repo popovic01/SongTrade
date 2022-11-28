@@ -27,7 +27,6 @@ namespace SongTrade.Controllers
         //register
         public IActionResult Index()
         {       
-            
             return View();
         }
 
@@ -41,7 +40,7 @@ namespace SongTrade.Controllers
             if (userFromDb != null)
             {
                 ModelState.AddModelError("Username.Name", "Username already exists");
-                TempData["error"] = "Username already exists";
+                //TempData["error"] = "Username already exists";
                 return View(request);
             }
 
@@ -52,6 +51,7 @@ namespace SongTrade.Controllers
             user.Username = request.Username;
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.Name = request.Name;
 
             _userRepo.Add(user);
             _userRepo.Save();
@@ -59,6 +59,7 @@ namespace SongTrade.Controllers
             string token = CreateToken(user);
             HttpContext.Session.SetString(StaticDetails.UserToken, token);
             HttpContext.Session.SetString(StaticDetails.Role, user.TypeOfUser);
+            HttpContext.Session.SetString("UserId", user.Id.ToString());
 
             TempData["success"] = "You register successfully";
 
@@ -83,9 +84,14 @@ namespace SongTrade.Controllers
                     string token = CreateToken(userFromDb);
                     HttpContext.Session.SetString(StaticDetails.UserToken, token);
                     HttpContext.Session.SetString(StaticDetails.Role, userFromDb.TypeOfUser);
+                    HttpContext.Session.SetString("UserId", userFromDb.Id.ToString());
 
                     TempData["success"] = "You logged in successfully";
                     return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("User.Password", "Password is not correct");
                 }
             }
 
@@ -105,7 +111,8 @@ namespace SongTrade.Controllers
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim("Role", user.TypeOfUser)
+                new Claim("Role", user.TypeOfUser),
+                new Claim("UserId", user.Id.ToString())
             }; 
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
@@ -121,39 +128,6 @@ namespace SongTrade.Controllers
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
-        }
-
-        private bool ValidateCurrentToken(string token)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                _config.GetSection("Jwt:Token").Value)); //key from appsettings.json
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            try
-            {
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    IssuerSigningKey = key
-                }, out SecurityToken validatedToken);
-            }
-            catch
-            {
-                return false;
-            }
-            return true;
-        }
-
-        public string GetClaim(string token, string claimType)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-            var ClaimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
-            return ClaimValue;
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

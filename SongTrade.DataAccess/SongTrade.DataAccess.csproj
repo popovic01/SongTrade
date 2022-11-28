@@ -24,8 +24,4 @@
     <ProjectReference Include="..\SongTrade.Models\SongTrade.Models.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>

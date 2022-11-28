@@ -15,5 +15,6 @@ namespace SongTrade.Models
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
         public string TypeOfUser { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -13,10 +13,22 @@
                     Find Songs
                     <em class="ml-2" data-feather="arrow-right"></em>
                 </a>
-                <button class="btn btn-primary d-inline-flex flex-row align-items-center">
-                    Sell songs
-                    <em class="ml-2" data-feather="arrow-right"></em>
-                </button>
+                @if (Context.Session.GetString("Role") == "author")
+                {
+                    <a class="btn btn-primary d-inline-flex flex-row align-items-center"
+                        asp-controller="Song" asp-action="Add">
+                        Sell Songs
+                        <em class="ml-2" data-feather="arrow-right"></em>
+                    </a>
+                }
+                else if (Context.Session.GetString("Role") == null)
+                {
+                    <a class="btn btn-primary d-inline-flex flex-row align-items-center"
+                   asp-controller="Auth" asp-action="Login">
+                        Sell Songs
+                        <em class="ml-2" data-feather="arrow-right"></em>
+                    </a>
+                }
             </div>
         </div>
     </div>
