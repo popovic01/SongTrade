@@ -2,7 +2,7 @@
 
 <h1>Details</h1>
 
-<div class="card m-4" style="width: 18rem;">
+<div class="card m-4" style="width: 50rem;">
     <div class="card-body">
         <h5 class="card-title">@Model.Title</h5>
         <p class="card-text">
@@ -10,6 +10,17 @@
                        class="card-link mb-2">@Model.User.Username</a>
         </p>
         <p class="card-text">@Model.Lyrics</p>
+        @if (Model.DemoUrl != "")
+        {
+            <audio class="mb-2" controls>
+                <source src="@Model.DemoUrl" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        }
         <p>Price: @Model.Price $</p>
+        <a asp-controller="Song" asp-action="Edit" asp-route-id="@Model.Id"
+           class="btn btn-primary btn-sm p-2" style="width: 8%">Edit</a>
+        <a asp-controller="Song" asp-action="Delete" asp-route-id="@Model.Id"
+           class="btn btn-danger btn-sm p-2" style="width: 8%">Delete</a>
     </div>
 </div>

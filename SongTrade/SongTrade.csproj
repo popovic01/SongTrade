@@ -24,4 +24,8 @@
     <ProjectReference Include="..\SongTrade.Utility\SongTrade.Utility.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\files\demos\" />
+  </ItemGroup>
+
 </Project>
