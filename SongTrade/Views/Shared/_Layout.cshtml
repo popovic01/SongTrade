@@ -55,6 +55,12 @@
                                 <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
                             </li>
                         }
+                        @if (Context.Session.GetString("Role") == "buyer")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Order" asp-action="AddToCart">Cart</a>
+                            </li>
+                        }
                         @if (Context.Session.GetString("Role") == "author" || Context.Session.GetString("Role") == "buyer")
                         {
                             <li class="nav-item">

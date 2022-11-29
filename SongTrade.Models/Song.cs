@@ -25,6 +25,6 @@ namespace SongTrade.Models
         public User User { get; set; }
         [Display(Name = "Demo")]
         [ValidateNever]
-        public string DemoUrl { get; set; }
+        public string? DemoUrl { get; set; }
     }
 }
