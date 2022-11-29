@@ -19,7 +19,7 @@
                     <p class="card-text">@song.Lyrics.Substring(0, 200)...</p>
                 }
                 <p>Price: @song.Price $</p>
-                @if (song.DemoUrl != "")
+                @if (song.DemoUrl != null)
                 {
                     <audio class="mb-2" style="width: 100%; height: 8%" controls>
                         <source src="@song.DemoUrl" type="audio/mpeg">

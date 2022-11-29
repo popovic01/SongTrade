@@ -18,11 +18,9 @@ namespace SongTrade.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IAuthService _auth;
-        //private readonly IConfiguration _config;
 
         public AuthController(IAuthService auth, IUserRepository userRepo)
         {
-            //_config = config;
             _userRepo = userRepo;
             _auth = auth;
         }
@@ -43,7 +41,6 @@ namespace SongTrade.Controllers
             if (userFromDb != null)
             {
                 ModelState.AddModelError("Username.Name", "Username already exists");
-                //TempData["error"] = "Username already exists";
                 return View(request);
             }
 
@@ -96,6 +93,10 @@ namespace SongTrade.Controllers
                 {
                     ModelState.AddModelError("User.Password", "Password is not correct");
                 }
+            }
+            else
+            {
+                ModelState.AddModelError("User.Username", "Username doesn't exist");
             }
 
             return View(request);

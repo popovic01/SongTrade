@@ -56,7 +56,7 @@ namespace SongTrade.Controllers
             _songRepo.Save();
             TempData["success"] = "Song added successfully";
 
-            return RedirectToAction("GetByUser", "Song", int.Parse(userId)); 
+            return RedirectToAction("GetByUser", "Song", new { userId }); 
         }
 
         [AuthRole("Role", "author")]

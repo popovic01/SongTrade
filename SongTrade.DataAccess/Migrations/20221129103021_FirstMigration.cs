@@ -38,7 +38,8 @@ namespace SongTrade.DataAccess.Migrations
                     Price = table.Column<int>(type: "int", nullable: false),
                     Lyrics = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Published = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DemoUrl = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

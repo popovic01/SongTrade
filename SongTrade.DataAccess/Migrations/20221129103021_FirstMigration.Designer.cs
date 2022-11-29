@@ -12,8 +12,8 @@ using SongTrade.DataAccess.Data;
 namespace SongTrade.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221128140709_AddDemoUrl")]
-    partial class AddDemoUrl
+    [Migration("20221129103021_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
