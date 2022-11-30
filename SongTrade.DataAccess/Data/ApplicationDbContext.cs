@@ -18,5 +18,7 @@ namespace SongTrade.DataAccess.Data
         public DbSet<Song> Songs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<OrderHeader> OrderHeaders { get; set; }
     }
 }

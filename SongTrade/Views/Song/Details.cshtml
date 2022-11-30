@@ -1,29 +1,41 @@
-﻿@model Song
+﻿@model ShoppingCart
 
 <h1>Details</h1>
 
-<div class="card m-4" style="width: 50rem;">
-    <div class="card-body">
-        <h5 class="card-title">@Model.Title</h5>
-        <p class="card-text">
-            Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@Model.UserId"
-                       class="card-link mb-2">@Model.User.Username</a>
-        </p>
-        <p class="card-text">@Model.Lyrics</p>
-        @if (Model.DemoUrl != null)
-        {
-            <audio class="mb-2" controls>
-                <source src="@Model.DemoUrl" type="audio/mpeg">
-                Your browser does not support the audio element.
-            </audio>
-        }
-        <p>Price: @Model.Price $</p>
-        @if ((Model.User.Id).ToString() == Context.Session.GetString("UserId"))
-        {
-            <a asp-controller="Song" asp-action="Edit" asp-route-id="@Model.Id"
-                class="btn btn-primary btn-sm p-2" style="width: 8%">Edit</a>
-            <a asp-controller="Song" asp-action="Delete" asp-route-id="@Model.Id"
-                class="btn btn-danger btn-sm p-2" style="width: 8%">Delete</a>
-        }
+<form method="post">
+    <input asp-for="SongId" hidden/>
+    <div class="card m-4" style="width: 50rem;">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Song.Title</h5>
+            <p class="card-text">
+                Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@Model.UserId"
+                           class="card-link mb-2">@Model.Song.User.Username</a>
+            </p>
+            <p class="card-text">@Model.Song.Lyrics</p>
+            @if (Model.Song.DemoUrl != null)
+            {
+                <audio class="mb-2" controls>
+                    <source src="@Model.Song.DemoUrl" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            }
+            <p>Price: @Model.Song.Price $</p>
+            @if ((Model.Song.User.Id).ToString() == Context.Session.GetString("UserId"))
+            {
+                <a asp-controller="Song" asp-action="Edit" asp-route-id="@Model.Id"
+               class="btn btn-primary btn-sm p-2" style="width: 8%">Edit</a>
+                <a asp-controller="Song" asp-action="Delete" asp-route-id="@Model.Id"
+               class="btn btn-danger btn-sm p-2" style="width: 8%">Delete</a>
+            }
+            @if (Context.Session.GetString("Role") == "buyer")
+            {
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Add to cart</button>
+            }
+            else if (Context.Session.GetString("Role") == null)
+            {
+                <a asp-controller="Auth" asp-action="Login"
+                    class="btn btn-outline-secondary btn-sm">Add to cart</a>
+            }
+        </div>
     </div>
-</div>
+</form>

@@ -6,6 +6,7 @@
     <title>@ViewData["Title"] - SongTrade</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/bootswatch.css" asp-append-version="true" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="~/SongTrade.styles.css" asp-append-version="true" />
@@ -58,7 +59,9 @@
                         @if (Context.Session.GetString("Role") == "buyer")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Order" asp-action="AddToCart">Cart</a>
+                                <a class="nav-link text-dark" asp-controller="Cart" asp-action="Index"
+                                    asp-route-buyerId="@Context.Session.GetString("UserId")">
+                                    <i class="bi bi-cart"></i></a>
                             </li>
                         }
                         @if (Context.Session.GetString("Role") == "author" || Context.Session.GetString("Role") == "buyer")

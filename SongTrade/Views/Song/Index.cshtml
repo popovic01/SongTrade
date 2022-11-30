@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Song>
+﻿<partial name="_Notification" />
+
+@model IEnumerable<Song>
 
 <div class="row pb-3">
     @foreach (var song in Model)
@@ -27,7 +29,6 @@
                     </audio>
                 }
                 <a asp-controller="Song" asp-action="Details" asp-route-songId=@song.Id class="btn btn-primary btn-sm">See Details</a>
-                <a asp-controller="" asp-action="" asp-route-songId=@song.Id class="btn btn-outline-secondary btn-sm">Add to cart</a>
             </div>
         </div>
     }

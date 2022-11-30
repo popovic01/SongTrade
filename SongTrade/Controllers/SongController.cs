@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using SongTrade.Authorization;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
@@ -11,11 +12,13 @@ namespace SongTrade.Controllers
     {
         private readonly ISongRepository _songRepo;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IShoppingCartRepository _cartRepo;
 
-        public SongController(ISongRepository songRepo, IWebHostEnvironment hostEnvironment)
+        public SongController(ISongRepository songRepo, IWebHostEnvironment hostEnvironment, IShoppingCartRepository cartRepo)
         {
             _songRepo = songRepo;   
             _hostEnvironment = hostEnvironment;
+            _cartRepo = cartRepo;
         }
 
         public IActionResult Index()
@@ -113,7 +116,6 @@ namespace SongTrade.Controllers
             var songFromFb = _songRepo.GetFirstOrDefault(s => s.Id == id);
             _songRepo.Remove(songFromFb);
             _songRepo.Save();
-            TempData["success"] = "Song deleted successfully";
 
             return RedirectToAction("GetByUser", "Song", new { userId });
         }
@@ -128,8 +130,33 @@ namespace SongTrade.Controllers
 
         public IActionResult Details(int songId)
         {
-            var songFromDb = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User");
-            return View(songFromDb);
+            ShoppingCart cart = new()
+            {
+                SongId = songId,
+                Song = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User")
+            };
+
+            return View(cart);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Details(ShoppingCart cart)
+        {
+            var userId = HttpContext.Session.GetString(StaticDetails.UserId);
+            cart.UserId = int.Parse(userId);
+            var cartFromDb = _cartRepo.GetFirstOrDefault(c => c.UserId == int.Parse(userId) &&
+                c.SongId == cart.SongId);
+            if (cartFromDb != null)
+                TempData["success"] = "You already have this song in the shopping cart";
+            else
+            {
+                _cartRepo.Add(cart);
+                _cartRepo.Save();
+                TempData["success"] = "You successfully added this song in the shopping cart";
+            }
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult NotAuthorized()
