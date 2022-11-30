@@ -1,4 +1,6 @@
 ﻿@model SongTrade.Models.ViewModel.ShoppingCartVM
+@using Microsoft.Extensions.Options
+@inject IOptions<SongTrade.Utility.StripeSettings> Stripe
 
 <form method="post">
 	<br />
