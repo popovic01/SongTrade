@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
+using NuGet.Packaging.Signing;
 using SongTrade.Authorization;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
@@ -39,25 +40,35 @@ namespace SongTrade.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Add(Song song, IFormFile? file)
+        public IActionResult Add(Song song, IFormFile? demoUrl, IFormFile songUrl)
         {
             var userId = HttpContext.Session.GetString(StaticDetails.UserId);
             song.UserId = int.Parse(userId);
 
-            //file
+            //demo url
             string wwRootPath = _hostEnvironment.WebRootPath;
-            if (file != null)
+            if (demoUrl != null)
             {
                 string fileName = Guid.NewGuid().ToString();
                 var uploads = Path.Combine(wwRootPath, @"files\demos");
-                var extension = Path.GetExtension(file.FileName);
+                var extension = Path.GetExtension(demoUrl.FileName);
 
                 using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
                 {
-                    file.CopyTo(fileStreams);
+                    demoUrl.CopyTo(fileStreams);
                 }
                 song.DemoUrl = @"\files\demos\" + fileName + extension;
             }
+
+            string songUrlName = Guid.NewGuid().ToString();
+            var uploadsSong = Path.Combine(wwRootPath, @"files\songs");
+            var extensionSong = Path.GetExtension(songUrl.FileName);
+
+            using (var fileStreams = new FileStream(Path.Combine(uploadsSong, songUrlName + extensionSong), FileMode.Create))
+            {
+                songUrl.CopyTo(fileStreams);
+            }
+            song.SongUrl = @"\files\songs\" + songUrlName + extensionSong; //for db
 
             _songRepo.Add(song);
             _songRepo.Save();
@@ -76,18 +87,18 @@ namespace SongTrade.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Song song, IFormFile? file)
+        public IActionResult Edit(Song song, IFormFile? demoUrl, IFormFile songUrl)
         {
             var userId = HttpContext.Session.GetString(StaticDetails.UserId);
             song.UserId = int.Parse(userId);
 
-            //file
+            //demo
             string wwwRootPath = _hostEnvironment.WebRootPath;
-            if (file != null)
+            if (demoUrl != null)
             {
                 string fileName = Guid.NewGuid().ToString();
                 var uploads = Path.Combine(wwwRootPath, @"files\demos");
-                var extension = Path.GetExtension(file.FileName);
+                var extension = Path.GetExtension(demoUrl.FileName);
 
                 //deleting old demo url
                 if (song.DemoUrl != null)
@@ -101,9 +112,30 @@ namespace SongTrade.Controllers
 
                 using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
                 {
-                    file.CopyTo(fileStreams);
+                    demoUrl.CopyTo(fileStreams);
                 }
                 song.DemoUrl = @"\files\demos\" + fileName + extension;
+            }
+
+            //song
+            if (songUrl != null)
+            {
+                string fileName = Guid.NewGuid().ToString();
+                var uploads = Path.Combine(wwwRootPath, @"files\songs");
+                var extension = Path.GetExtension(songUrl.FileName);
+
+                //deleting old song url
+                var oldSongPath = Path.Combine(wwwRootPath, song.SongUrl.TrimStart('\\'));
+                if (System.IO.File.Exists(oldSongPath))
+                {
+                    System.IO.File.Delete(oldSongPath);
+                }
+
+                using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create))
+                {
+                    songUrl.CopyTo(fileStreams);
+                }
+                song.DemoUrl = @"\files\songs\" + fileName + extension;
             }
 
             _songRepo.Update(song);

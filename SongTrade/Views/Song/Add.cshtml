@@ -23,10 +23,14 @@
     </div>
     <div class="mb-2">
         <label asp-for="DemoUrl"></label>
-        <input type="file" id="uploadBox" name="file" class="form-control" />
+        <input type="file" id="uploadDemo" name="demoUrl" class="form-control" />
+    </div>
+    <div class="mb-2">
+        <label asp-for="SongUrl"></label>
+        <input type="file" id="uploadSong" name="songUrl" class="form-control" />
     </div>
 
-    <button type="submit" class="btn btn-outline-dark">Submit</button>
+    <button type="submit" onclick="return ValidateInput()" class="btn btn-outline-dark">Create</button>
     <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">
         Cancel
     </a>
@@ -37,4 +41,24 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'floating',
+        });
+        /*special validation for creating song -
+        song url can't be null*/
+        function ValidateInput() {
+            if (document.getElementById("uploadSong").value == "") {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Please upload Song Url!'
+                });
+                return false; //validation is invalid
+            }
+            return true;
+        }
+    </script>
 }

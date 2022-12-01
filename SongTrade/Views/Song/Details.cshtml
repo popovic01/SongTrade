@@ -11,7 +11,7 @@
                 Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@Model.Song.UserId"
                            class="card-link mb-2">@Model.Song.User.Username</a>
             </p>
-            <p class="card-text">@Model.Song.Lyrics</p>
+            <p class="card-text">@Html.Raw(Model.Song.Lyrics)</p>
             @if (Model.Song.DemoUrl != null)
             {
                 <audio class="mb-2" controls>

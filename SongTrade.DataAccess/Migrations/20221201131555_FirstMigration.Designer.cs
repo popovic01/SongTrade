@@ -12,8 +12,8 @@ using SongTrade.DataAccess.Data;
 namespace SongTrade.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221130153029_AddOrderToDb")]
-    partial class AddOrderToDb
+    [Migration("20221201131555_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,10 @@ namespace SongTrade.DataAccess.Migrations
 
                     b.Property<DateTime>("Published")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("SongUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

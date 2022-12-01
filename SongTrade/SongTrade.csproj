@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\files\demos\" />
+    <Folder Include="wwwroot\files\songs\" />
   </ItemGroup>
 
 </Project>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace SongTrade.Models
 {
@@ -26,5 +27,7 @@ namespace SongTrade.Models
         [Display(Name = "Demo")]
         [ValidateNever]
         public string? DemoUrl { get; set; }
+        [Display(Name = "Song Url")]
+        public string SongUrl { get; set; }
     }
 }
