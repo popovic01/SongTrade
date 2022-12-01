@@ -7,7 +7,7 @@
             <div class="card-body">
                 <h5 class="card-title">@song.Title</h5>
                 <p class="card-text">
-                    Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@song.UserId"
+                    Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@song.UserId"
                            class="card-link mb-2">@song.User.Username</a>
                 </p>
                 @if (song.Lyrics.Length < 200)
@@ -27,10 +27,13 @@
                 }
                 <p>Price: @song.Price $</p>
                 <a asp-controller="Song" asp-action="Details" asp-route-songId=@song.Id class="btn btn-primary btn-sm">See Details</a>
-                <a asp-controller="Song" asp-action="Edit" asp-route-id="@song.Id"
-                    class="btn btn-primary btn-sm p-2" style="width: 25%">Edit</a>
-                <a asp-controller="Song" asp-action="Delete" asp-route-id="@song.Id"
-                    class="btn btn-danger btn-sm p-2" style="width: 25%">Delete</a>
+                @if (Context.Session.GetString("UserId") == song.UserId.ToString())
+                {
+                    <a asp-controller="Song" asp-action="Edit" asp-route-id="@song.Id"
+                        class="btn btn-primary btn-sm p-2" style="width: 25%">Edit</a>
+                    <a asp-controller="Song" asp-action="Delete" asp-route-id="@song.Id"
+                        class="btn btn-danger btn-sm p-2" style="width: 25%">Delete</a>
+                }
             </div>
         </div>
     }

@@ -8,7 +8,7 @@
         <div class="card-body">
             <h5 class="card-title">@Model.Song.Title</h5>
             <p class="card-text">
-                Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@Model.UserId"
+                Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@Model.Song.UserId"
                            class="card-link mb-2">@Model.Song.User.Username</a>
             </p>
             <p class="card-text">@Model.Song.Lyrics</p>
@@ -22,9 +22,9 @@
             <p>Price: @Model.Song.Price $</p>
             @if ((Model.Song.User.Id).ToString() == Context.Session.GetString("UserId"))
             {
-                <a asp-controller="Song" asp-action="Edit" asp-route-id="@Model.Id"
+                <a asp-controller="Song" asp-action="Edit" asp-route-id="@Model.Song.Id"
                class="btn btn-primary btn-sm p-2" style="width: 8%">Edit</a>
-                <a asp-controller="Song" asp-action="Delete" asp-route-id="@Model.Id"
+                <a asp-controller="Song" asp-action="Delete" asp-route-id="@Model.Song.Id"
                class="btn btn-danger btn-sm p-2" style="width: 8%">Delete</a>
             }
             @if (Context.Session.GetString("Role") == "buyer")

@@ -9,7 +9,7 @@
             <div class="card-body">
                 <h5 class="card-title">@song.Title</h5>
                 <p class="card-text">
-                    Author: <a asp-controller="Author" asp-action="Index" asp-route-authorId="@song.UserId"
+                    Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@song.UserId"
                            class="card-link mb-2">@song.User.Username</a>
                 </p>
                 @if (song.Lyrics.Length < 200)

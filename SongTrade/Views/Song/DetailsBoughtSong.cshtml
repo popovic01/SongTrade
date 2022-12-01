@@ -1,0 +1,23 @@
+﻿@model Song
+
+<h1>Details</h1>
+
+<form method="post">
+    <div class="card m-4" style="width: 50rem;">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Title</h5>
+            <p class="card-text">
+                Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@Model.UserId"
+                           class="card-link mb-2">@Model.User.Username</a>
+            </p>
+            <p class="card-text">@Model.Lyrics</p>
+            @if (Model.DemoUrl != null)
+            {
+                <audio class="mb-2" controls>
+                    <source src="@Model.DemoUrl" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            }
+        </div>
+    </div>
+</form>

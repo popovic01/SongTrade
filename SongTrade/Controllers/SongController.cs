@@ -13,12 +13,16 @@ namespace SongTrade.Controllers
         private readonly ISongRepository _songRepo;
         private readonly IWebHostEnvironment _hostEnvironment;
         private readonly IShoppingCartRepository _cartRepo;
+        private readonly IOrderHeaderRepository _orderHeaderRepo;
+        private readonly IOrderDetailRepository _orderDetailsRepo;
 
-        public SongController(ISongRepository songRepo, IWebHostEnvironment hostEnvironment, IShoppingCartRepository cartRepo)
+        public SongController(ISongRepository songRepo, IWebHostEnvironment hostEnvironment, IShoppingCartRepository cartRepo, IOrderDetailRepository orderDetailsRepo, IOrderHeaderRepository orderHeaderRepo)
         {
             _songRepo = songRepo;   
             _hostEnvironment = hostEnvironment;
             _cartRepo = cartRepo;
+            _orderHeaderRepo = orderHeaderRepo;
+            _orderDetailsRepo = orderDetailsRepo;
         }
 
         public IActionResult Index()
@@ -120,11 +124,27 @@ namespace SongTrade.Controllers
             return RedirectToAction("GetByUser", "Song", new { userId });
         }
 
-        [AuthRole("Role", "author")]
         public IActionResult GetByUser(string userId)
         {
             int id = int.Parse(userId);
             IEnumerable<Song> songs = _songRepo.GetAll(s => s.UserId == id, includeProperties: "User");
+            return View(songs);
+        }
+
+
+        public IActionResult GetByBuyer(string buyerId)
+        {
+            int id = int.Parse(buyerId);
+            var orders = _orderHeaderRepo.GetAll(o => o.UserId == id); //orders of buyer
+            List<Song> songs = new List<Song>();
+            foreach (var item in orders)
+            {
+                IEnumerable<OrderDetail> detailsForOrder = _orderDetailsRepo.GetAll(d => d.OrderId == item.Id, includeProperties: "Song"); //order details for every order
+                foreach (var detail in detailsForOrder)
+                {
+                    songs.AddRange(_songRepo.GetAll(s => s.Id == detail.SongId, includeProperties: "User"));
+                }
+            }
             return View(songs);
         }
 
@@ -147,16 +167,26 @@ namespace SongTrade.Controllers
             cart.UserId = int.Parse(userId);
             var cartFromDb = _cartRepo.GetFirstOrDefault(c => c.UserId == int.Parse(userId) &&
                 c.SongId == cart.SongId);
+            var orderDetailFromDb = _orderDetailsRepo.GetFirstOrDefault(d => d.SongId == cart.SongId &&
+                d.OrderHeader.UserId == int.Parse(userId));
             if (cartFromDb != null)
                 TempData["success"] = "You already have this song in the shopping cart";
+            else if (orderDetailFromDb != null)
+                TempData["success"] = "You already bought this song";
             else
             {
                 _cartRepo.Add(cart);
                 _cartRepo.Save();
-                TempData["success"] = "You successfully added this song in the shopping cart";
+                TempData["success"] = "Successfully added song in the shopping cart";
             }
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult DetailsBoughtSong(int songId)
+        {
+            var songFromDb = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User");
+            return View(songFromDb);
         }
 
         public IActionResult NotAuthorized()

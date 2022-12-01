@@ -1,0 +1,33 @@
+﻿@model List<Song>
+
+<div class="row p-4">
+    @foreach (var item in Model)
+    {
+        <div class="card m-2" style="width: 20rem; height: 450px">
+            <div class="card-body">
+                <h5 class="card-title">@item.Title</h5>
+                <p class="card-text">
+                    Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@item.UserId"
+                           class="card-link mb-2">@item.User.Username</a>
+                </p>
+                @if (item.Lyrics.Length < 200)
+                {
+                    <p class="card-text">@item.Lyrics.Substring(0, item.Lyrics.Length)...</p>
+                }
+                else
+                {
+                    <p class="card-text">@item.Lyrics.Substring(0, 200)...</p>
+                }
+                @if (item.DemoUrl != null)
+                {
+                    <audio class="mb-2" style="width: 100%; height: 8%" controls>
+                        <source src="@item.DemoUrl" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                }
+                <a asp-controller="Song" asp-action="DetailsBoughtSong" asp-route-songId=@item.Id class="btn btn-primary btn-sm">See Details</a>
+            </div>
+        </div>
+    }
+</div>
+

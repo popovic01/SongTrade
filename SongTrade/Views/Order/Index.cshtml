@@ -1,0 +1,20 @@
+﻿@model IEnumerable<OrderHeader>
+
+<h1>My Orders</h1>
+
+<div class="p-3">
+    <table id="tblData" class="table table-bordered table-striped" style="width:100%">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Created At</th>
+                <th>Order Total</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/js/order.js"></script>
+}
