@@ -4,6 +4,7 @@ using NuGet.Packaging.Signing;
 using SongTrade.Authorization;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
+using SongTrade.Models.ViewModel;
 using SongTrade.Utility;
 using System.Drawing;
 
@@ -145,6 +146,7 @@ namespace SongTrade.Controllers
             return RedirectToAction("GetByUser", "Song", new { userId });
         }
 
+        [AuthRole("Role", "author")]
         public IActionResult Delete(int? id)
         {
             var userId = HttpContext.Session.GetString(StaticDetails.UserId);
@@ -156,6 +158,7 @@ namespace SongTrade.Controllers
             return RedirectToAction("GetByUser", "Song", new { userId });
         }
 
+        [AuthRole("Role", "author")]
         public IActionResult GetByUser(string userId)
         {
             int id = int.Parse(userId);
@@ -163,7 +166,7 @@ namespace SongTrade.Controllers
             return View(songs);
         }
 
-
+        [AuthRole("Role", "buyer")]
         public IActionResult GetByBuyer(string buyerId)
         {
             int id = int.Parse(buyerId);
@@ -215,6 +218,7 @@ namespace SongTrade.Controllers
             return RedirectToAction("Index");
         }
 
+
         public IActionResult DetailsBoughtSong(int songId)
         {
             var songFromDb = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User");
@@ -224,6 +228,36 @@ namespace SongTrade.Controllers
         public IActionResult NotAuthorized()
         {
             return View();
+        }
+
+        public IActionResult SoldSongs()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetSoldSongs()
+        {
+            int userId = int.Parse(HttpContext.Session.GetString(StaticDetails.UserId));
+            IEnumerable<OrderDetail> details = _orderDetailsRepo.GetAll(includeProperties: "Song");
+            List<SoldSongsVM> songs = new List<SoldSongsVM>();
+            
+            foreach (var item in details)
+            {
+                if (item.Song.UserId == userId)
+                {
+                    var count = _orderDetailsRepo.GetAll(d => d.Song == item.Song).Count();
+                    var song = new SoldSongsVM
+                    {
+                        Title = item.Song.Title,
+                        SoldCount = count,
+                        TotalPrice = item.Price * count
+                    };
+                    if (!songs.Exists(s => s.Title == song.Title))
+                        songs.Add(song);
+                }
+            }
+            return Json(new { data = songs });
         }
     }
 }
