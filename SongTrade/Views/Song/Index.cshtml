@@ -1,9 +1,21 @@
 ﻿<partial name="_Notification" />
 
-@model IEnumerable<Song>
+@model SongTrade.Models.ViewModel.SearchSongsVM
+
+<form method="post">
+    <label>Search by Title or Author</label>
+    <div class="row mb-4">
+        <div class="col-3">
+            <input asp-for="@Model.SearchString" class="form-control mt-1">
+        </div>
+        <div class="col-6">
+            <button type="submit" class="btn btn-primary btn-sm mt-2">Search</button>
+        </div>
+    </div>
+</form>
 
 <div class="row pb-3">
-    @foreach (var song in Model)
+    @foreach (var song in Model.Songs)
     {
         <div class="card m-2" style="width: 20rem; height: 250px">
             <div class="card-body">

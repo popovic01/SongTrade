@@ -9,7 +9,7 @@
                 <p class="lead text-primary py-3">SongTrade is a platform that helps freelancers and buyers to find 
                     or sell songs in minutes. Sign up for free.</p>
                 <a class="btn btn-primary d-inline-flex flex-row align-items-center"
-                    asp-controller="Song" asp-action="Index">
+                   asp-controller="Song" asp-action="Index">
                     Find Songs
                     <em class="ml-2" data-feather="arrow-right"></em>
                 </a>
@@ -17,14 +17,6 @@
                 {
                     <a class="btn btn-primary d-inline-flex flex-row align-items-center"
                         asp-controller="Song" asp-action="Add">
-                        Sell Songs
-                        <em class="ml-2" data-feather="arrow-right"></em>
-                    </a>
-                }
-                else if (Context.Session.GetString("Role") == null)
-                {
-                    <a class="btn btn-primary d-inline-flex flex-row align-items-center"
-                   asp-controller="Auth" asp-action="Login">
                         Sell Songs
                         <em class="ml-2" data-feather="arrow-right"></em>
                     </a>

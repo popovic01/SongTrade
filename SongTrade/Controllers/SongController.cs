@@ -7,6 +7,7 @@ using SongTrade.Models;
 using SongTrade.Models.ViewModel;
 using SongTrade.Utility;
 using System.Drawing;
+using System.Linq;
 
 namespace SongTrade.Controllers
 {
@@ -17,6 +18,8 @@ namespace SongTrade.Controllers
         private readonly IShoppingCartRepository _cartRepo;
         private readonly IOrderHeaderRepository _orderHeaderRepo;
         private readonly IOrderDetailRepository _orderDetailsRepo;
+        [BindProperty]
+        public SearchSongsVM SearchSongsVM { get; set; }
 
         public SongController(ISongRepository songRepo, IWebHostEnvironment hostEnvironment, IShoppingCartRepository cartRepo, IOrderDetailRepository orderDetailsRepo, IOrderHeaderRepository orderHeaderRepo)
         {
@@ -29,8 +32,28 @@ namespace SongTrade.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Song> songs = _songRepo.GetAll(includeProperties: "User");
-            return View(songs);
+            SearchSongsVM = new SearchSongsVM()
+            {
+                Songs = _songRepo.GetAll(includeProperties: "User"),
+                SearchString = ""
+            };
+            return View(SearchSongsVM);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Index(SearchSongsVM vm)
+        {
+            if (vm.SearchString == null)
+            {
+                SearchSongsVM.Songs = _songRepo.GetAll(includeProperties: "User");
+            }
+            else
+            {
+                SearchSongsVM.SearchString = vm.SearchString;
+                SearchSongsVM.Songs = _songRepo.GetAll(s => s.Title.Contains(vm.SearchString) || s.User.Username.Contains(vm.SearchString), includeProperties: "User");
+            }
+            return View(SearchSongsVM);
         }
 
         [AuthRole("Role", "author")]
