@@ -34,13 +34,13 @@
 
 <form method="post">
     <div class="row mb-4">
-        <div class="col-3">
+        <div class="col-4">
             <input asp-for="@Model.SearchString" class="form-control mt-1" placeholder="Search by Title or Author">
         </div>
-        <div class="col-4">
+        <div class="col-2">
             <button type="submit" class="btn btn-primary btn-sm mt-2">Search</button>
         </div>
-        <div class="col-2 mt-4">
+        <div class="col-2 mt-3">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Songs per page: @Model.PageSize</a>
             <div class="dropdown-menu" style="">
                 <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">6</a>
@@ -48,7 +48,7 @@
                 <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=48 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">48</a>
             </div>
         </div>
-        <div class="col-3 mt-4">
+        <div class="col-2 mt-3">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sort By: @Model.Sort</a>
             <div class="dropdown-menu" style="">
                 <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize="@Model.PageSize" asp-route-sort ="Newest" asp-route-query="@Model.SearchString">Newest</a>

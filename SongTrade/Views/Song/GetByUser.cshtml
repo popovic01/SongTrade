@@ -1,5 +1,13 @@
 ﻿@model IEnumerable<Song>
 
+@if (Context.Session.GetString("UserId") == Model.ToList()[0].UserId.ToString())
+{
+    <div class="row m-2">
+        <div class="col-2">
+            <a asp-action="Download" class="btn btn-outline-primary btn-sm mt-2">Download report</a>
+        </div>
+    </div>
+}
 <div class="row p-4">
     @foreach (var song in Model)
     {

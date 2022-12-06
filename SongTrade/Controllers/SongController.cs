@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IronXL;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using NuGet.Packaging.Signing;
 using SongTrade.Authorization;
@@ -236,16 +237,10 @@ namespace SongTrade.Controllers
             return RedirectToAction("Index");
         }
 
-
         public IActionResult DetailsBoughtSong(int songId)
         {
             var songFromDb = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User");
             return View(songFromDb);
-        }
-
-        public IActionResult NotAuthorized()
-        {
-            return View();
         }
 
         public IActionResult SoldSongs()
@@ -276,6 +271,49 @@ namespace SongTrade.Controllers
                 }
             }
             return Json(new { data = songs });
+        }
+
+        public IActionResult Download()
+        {
+            WorkBook report = WorkBook.Create(ExcelFileFormat.XLSX); //creating file
+            var songsSheet = report.CreateWorkSheet("All songs"); //creating sheet
+
+            songsSheet["A1"].Value = "Title";
+            songsSheet["B1"].Value = "Price";
+            songsSheet["C1"].Value = "Lyrics";
+            songsSheet["D1"].Value = "Published";
+            songsSheet["E1"].Value = "User";
+            songsSheet["F1"].Value = "Demo Url";
+            songsSheet["G1"].Value = "Song Url";
+
+            songsSheet["A1"].Style.BackgroundColor = "#F7D6D0";
+            songsSheet["B1"].Style.BackgroundColor = "#F7D6D0";
+            songsSheet["C1"].Style.BackgroundColor = "#F7D6D0";
+            songsSheet["D1"].Style.BackgroundColor = "#F7D6D0";
+            songsSheet["E1"].Style.BackgroundColor = "#F7D6D0";
+            songsSheet["F1"].Style.BackgroundColor = "#F7D6D0";
+            songsSheet["G1"].Style.BackgroundColor = "#F7D6D0";
+
+            int userId = int.Parse(HttpContext.Session.GetString(StaticDetails.UserId));
+            var songs = _songRepo.GetAll(s => s.UserId == userId, includeProperties: "User").ToList();
+
+            int counter;
+
+            for (int i = 1; i <= songs.Count(); i++)
+            {
+                counter = i + 1;
+                songsSheet["A" + counter].Value = songs[i - 1].Title;
+                songsSheet["B" + counter].Value = songs[i - 1].Price;
+                songsSheet["C" + counter].Value = songs[i - 1].Lyrics;
+                songsSheet["D" + counter].Value = songs[i - 1].Published.Date;
+                songsSheet["E" + counter].Value = songs[i - 1].User.Username;
+                songsSheet["F" + counter].Value = songs[i - 1].DemoUrl;
+                songsSheet["G" + counter].Value = songs[i - 1].SongUrl;
+            }
+
+            report.SaveAs($"Report_{DateTime.Now.ToString().Replace("/", "_").Replace(" ", "_").Replace(":", "_")}.xlsx");
+
+            return RedirectToAction("GetByUser", new { userId = userId.ToString() });
         }
     }
 }
