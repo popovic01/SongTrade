@@ -60,6 +60,7 @@ namespace SongTrade.Controllers
             HttpContext.Session.SetString(StaticDetails.UserToken, token);
             HttpContext.Session.SetString(StaticDetails.Role, user.TypeOfUser);
             HttpContext.Session.SetString(StaticDetails.UserId, user.Id.ToString());
+            HttpContext.Session.SetString(StaticDetails.Username, user.Username.ToString());
 
             TempData["success"] = "You register successfully";
 
@@ -85,6 +86,7 @@ namespace SongTrade.Controllers
                     HttpContext.Session.SetString(StaticDetails.UserToken, token);
                     HttpContext.Session.SetString(StaticDetails.Role, userFromDb.TypeOfUser);
                     HttpContext.Session.SetString(StaticDetails.UserId, userFromDb.Id.ToString());
+                    HttpContext.Session.SetString(StaticDetails.Username, userFromDb.Username.ToString());
 
                     TempData["success"] = "You logged in successfully";
                     return RedirectToAction("Index", "Home");

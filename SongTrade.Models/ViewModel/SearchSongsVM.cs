@@ -14,5 +14,6 @@ namespace SongTrade.Models.ViewModel
         public int PageSize { get; set; }
         public Uri? NextPage { get; set; }
         public Uri? PreviousPage { get; set; }
+        public string Sort { get; set; }
     }
 }

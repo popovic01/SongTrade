@@ -37,15 +37,23 @@
         <div class="col-3">
             <input asp-for="@Model.SearchString" class="form-control mt-1" placeholder="Search by Title or Author">
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <button type="submit" class="btn btn-primary btn-sm mt-2">Search</button>
         </div>
-        <div class="col-3 mt-4">
+        <div class="col-2 mt-4">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Songs per page: @Model.PageSize</a>
             <div class="dropdown-menu" style="">
-                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=6 asp-route-query="@Model.SearchString">6</a>
-                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=24 asp-route-query="@Model.SearchString">24</a>
-                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=48 asp-route-query="@Model.SearchString">48</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">6</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=24 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">24</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize=48 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">48</a>
+            </div>
+        </div>
+        <div class="col-3 mt-4">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Sort By: @Model.Sort</a>
+            <div class="dropdown-menu" style="">
+                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize="@Model.PageSize" asp-route-sort ="Newest" asp-route-query="@Model.SearchString">Newest</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize="@Model.PageSize" asp-route-sort="Price ascending" asp-route-query="@Model.SearchString">Price Ascending</a>
+                <a class="dropdown-item" asp-action="Index" asp-route-pageNumber="@Model.PageNumber" asp-route-pageSize="@Model.PageSize" asp-route-sort="Price descending" asp-route-query="@Model.SearchString">Price Descending</a>
             </div>
         </div>
     </div>
@@ -77,19 +85,19 @@
 
     <ul class="pagination">
         <li class="page-item">
-            <a class="page-link @one" asp-controller="Song" asp-action="Index" asp-route-pageNumber=1 asp-route-pageSize="@Model.PageSize" asp-route-query="@Model.SearchString">1</a>
+            <a class="page-link @one" asp-controller="Song" asp-action="Index" asp-route-pageNumber=1 asp-route-pageSize="@Model.PageSize" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">1</a>
         </li>
         <li class="page-item">
-            <a class="page-link @two" asp-controller="Song" asp-action="Index" asp-route-pageNumber=2 asp-route-pageSize="@Model.PageSize" asp-route-query="@Model.SearchString">2</a>
+            <a class="page-link @two" asp-controller="Song" asp-action="Index" asp-route-pageNumber=2 asp-route-pageSize="@Model.PageSize" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">2</a>
         </li>
         <li class="page-item">
-            <a class="page-link @three" asp-controller="Song" asp-action="Index" asp-route-pageNumber=3 asp-route-pageSize="@Model.PageSize" asp-route-query="@Model.SearchString">3</a>
+            <a class="page-link @three" asp-controller="Song" asp-action="Index" asp-route-pageNumber=3 asp-route-pageSize="@Model.PageSize" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">3</a>
         </li>
         <li class="page-item">
-            <a class="page-link @four" asp-controller="Song" asp-action="Index" asp-route-pageNumber=4 asp-route-pageSize="@Model.PageSize" asp-route-query="@Model.SearchString">4</a>
+            <a class="page-link @four" asp-controller="Song" asp-action="Index" asp-route-pageNumber=4 asp-route-pageSize="@Model.PageSize" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">4</a>
         </li>
         <li class="page-item">
-            <a class="page-link @five" asp-controller="Song" asp-action="Index" asp-route-pageNumber=5 asp-route-pageSize="@Model.PageSize" asp-route-query="@Model.SearchString">5</a>
+            <a class="page-link @five" asp-controller="Song" asp-action="Index" asp-route-pageNumber=5 asp-route-pageSize="@Model.PageSize" asp-route-pageSize=6 asp-route-sort="@Model.Sort" asp-route-query="@Model.SearchString">5</a>
         </li>
     </ul>
 </form>

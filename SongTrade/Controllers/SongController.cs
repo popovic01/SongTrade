@@ -31,23 +31,24 @@ namespace SongTrade.Controllers
             _orderDetailsRepo = orderDetailsRepo;
         }
 
-        public IActionResult Index(string query, int pageNumber = 1, int pageSize = 6)
+        public IActionResult Index(string query, int pageNumber = 1, int pageSize = 6, string sort = "Newest")
         {
             SearchSongsVM = new SearchSongsVM()
             {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 SearchString = query,
-                Songs = _songRepo.GetByPage(query, pageNumber, pageSize)
+                Sort = sort,
+                Songs = _songRepo.GetByPage(query, pageNumber, pageSize, sort)
             };
             return View(SearchSongsVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(SearchSongsVM vm, int pageNumber = 1, int pageSize = 6)
+        public IActionResult Index(SearchSongsVM vm, int pageNumber = 1, int pageSize = 6, string sort = "Newest")
         {
-            SearchSongsVM.Songs = _songRepo.GetByPage(vm.SearchString, pageNumber, pageSize);
+            SearchSongsVM.Songs = _songRepo.GetByPage(vm.SearchString, pageNumber, pageSize, sort);
             return View(SearchSongsVM);
         }
 
@@ -176,7 +177,6 @@ namespace SongTrade.Controllers
             return RedirectToAction("GetByUser", "Song", new { userId });
         }
 
-        [AuthRole("Role", "author")]
         public IActionResult GetByUser(string userId)
         {
             int id = int.Parse(userId);

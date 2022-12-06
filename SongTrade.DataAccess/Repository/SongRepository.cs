@@ -25,7 +25,7 @@ namespace SongTrade.DataAccess.Repository
             _db.Songs.Update(song);
         }
 
-        public IEnumerable<Song> GetByPage(string query, int pageNumber, int pageSize)
+        public IEnumerable<Song> GetByPage(string query, int pageNumber, int pageSize, string sort)
         {
             IEnumerable<Song> songs;
             if (query != null)
@@ -34,6 +34,10 @@ namespace SongTrade.DataAccess.Repository
                 songs = base.GetAll(includeProperties: "User");
             //pagination
             songs = songs.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+            if (sort == "Price ascending")
+                songs = songs.OrderBy(s => s.Price);
+            else if (sort == "Price descending")
+                songs = songs.OrderByDescending(s => s.Price);
             return songs;
         }
     }
