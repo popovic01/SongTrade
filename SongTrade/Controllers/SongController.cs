@@ -7,6 +7,7 @@ using SongTrade.Models;
 using SongTrade.Models.ViewModel;
 using SongTrade.Utility;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 
 namespace SongTrade.Controllers
@@ -30,29 +31,23 @@ namespace SongTrade.Controllers
             _orderDetailsRepo = orderDetailsRepo;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string query, int pageNumber = 1, int pageSize = 6)
         {
             SearchSongsVM = new SearchSongsVM()
             {
-                Songs = _songRepo.GetAll(includeProperties: "User"),
-                SearchString = ""
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SearchString = query,
+                Songs = _songRepo.GetByPage(query, pageNumber, pageSize)
             };
             return View(SearchSongsVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Index(SearchSongsVM vm)
+        public IActionResult Index(SearchSongsVM vm, int pageNumber = 1, int pageSize = 6)
         {
-            if (vm.SearchString == null)
-            {
-                SearchSongsVM.Songs = _songRepo.GetAll(includeProperties: "User");
-            }
-            else
-            {
-                SearchSongsVM.SearchString = vm.SearchString;
-                SearchSongsVM.Songs = _songRepo.GetAll(s => s.Title.Contains(vm.SearchString) || s.User.Username.Contains(vm.SearchString), includeProperties: "User");
-            }
+            SearchSongsVM.Songs = _songRepo.GetByPage(vm.SearchString, pageNumber, pageSize);
             return View(SearchSongsVM);
         }
 

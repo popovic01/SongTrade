@@ -10,5 +10,6 @@ namespace SongTrade.DataAccess.Repository.IRepository
     public interface ISongRepository : IRepository<Song>
     {
         void Update(Song song);
+        IEnumerable<Song> GetByPage(string query, int pageNumber = 0, int pageSize = 6);
     }
 }
