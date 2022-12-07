@@ -42,6 +42,13 @@ namespace SongTrade.Controllers
                 Sort = sort,
                 Songs = _songRepo.GetByPage(query, pageNumber, pageSize, sort)
             };
+            var userId = HttpContext.Session.GetString(StaticDetails.UserId);
+            if (userId != null)
+            {
+                checkIfBought(userId);
+                checkIfInCart(userId);
+            }
+
             return View(SearchSongsVM);
         }
 
@@ -210,6 +217,17 @@ namespace SongTrade.Controllers
                 Song = _songRepo.GetFirstOrDefault(s => s.Id == songId, includeProperties: "User")
             };
 
+            var userId = HttpContext.Session.GetString(StaticDetails.UserId);
+            if (userId != null)
+            {
+                var boughtSongs = _orderDetailsRepo.GetAll(d => d.OrderHeader.UserId == int.Parse(userId), includeProperties: "OrderHeader").Select(d => d.SongId).ToList();
+                if (boughtSongs.Contains(songId))
+                    cart.Song.Bought = true;
+                var songsInCart = _cartRepo.GetAll(c => c.UserId == int.Parse(userId), includeProperties: "Song").Select(c => c.SongId).ToList();
+                if (songsInCart.Contains(songId))
+                    cart.Song.InCart = true;
+            }
+
             return View(cart);
         }
 
@@ -223,16 +241,9 @@ namespace SongTrade.Controllers
                 c.SongId == cart.SongId);
             var orderDetailFromDb = _orderDetailsRepo.GetFirstOrDefault(d => d.SongId == cart.SongId &&
                 d.OrderHeader.UserId == int.Parse(userId));
-            if (cartFromDb != null)
-                TempData["success"] = "You already have this song in the shopping cart";
-            else if (orderDetailFromDb != null)
-                TempData["success"] = "You already bought this song";
-            else
-            {
-                _cartRepo.Add(cart);
-                _cartRepo.Save();
-                TempData["success"] = "Successfully added song in the shopping cart";
-            }
+            _cartRepo.Add(cart);
+            _cartRepo.Save();
+            TempData["success"] = "Successfully added song in the shopping cart";
 
             return RedirectToAction("Index");
         }
@@ -314,6 +325,26 @@ namespace SongTrade.Controllers
             report.SaveAs($"Report_{DateTime.Now.ToString().Replace("/", "_").Replace(" ", "_").Replace(":", "_")}.xlsx");
 
             return RedirectToAction("GetByUser", new { userId = userId.ToString() });
+        }
+
+        private void checkIfBought(string userId)
+        {
+            var boughtSongs = _orderDetailsRepo.GetAll(d => d.OrderHeader.UserId == int.Parse(userId), includeProperties: "OrderHeader").Select(d => d.SongId).ToList();
+            foreach (var songIndex in boughtSongs)
+            {
+                if (SearchSongsVM.Songs.Contains(_songRepo.GetFirstOrDefault(s => s.Id == songIndex)))
+                    SearchSongsVM.Songs.Where(s => s.Id == songIndex).First().Bought = true;
+            }
+        }
+
+        private void checkIfInCart(string userId)
+        {
+            var songsInCart = _cartRepo.GetAll(c => c.UserId == int.Parse(userId), includeProperties: "Song").Select(c => c.SongId).ToList();
+            foreach (var songIndex in songsInCart)
+            {
+                if (SearchSongsVM.Songs.Contains(_songRepo.GetFirstOrDefault(s => s.Id == songIndex)))
+                    SearchSongsVM.Songs.Where(s => s.Id == songIndex).First().InCart = true;
+            }
         }
     }
 }

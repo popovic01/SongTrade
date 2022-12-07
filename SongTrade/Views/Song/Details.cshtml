@@ -6,7 +6,21 @@
     <input asp-for="SongId" hidden/>
     <div class="card m-4" style="width: 50rem;">
         <div class="card-body">
-            <h5 class="card-title">@Model.Song.Title</h5>
+            <div class="row">
+                <h5 class="card-title col-8 mt-1">@Model.Song.Title</h5>
+                @if (Model.Song.Bought == true)
+                {
+                    <div class="col-4 text-end m-0">
+                        <span class="badge bg-success">Bought</span>
+                    </div>
+                }
+                @if (Model.Song.InCart == true)
+                {
+                    <div class="col-4 text-end m-0">
+                        <span class="badge bg-warning">In cart</span>
+                    </div>
+                }
+            </div>
             <p class="card-text">
                 Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@Model.Song.UserId"
                            class="card-link mb-2">@Model.Song.User.Username</a>
@@ -27,7 +41,7 @@
                 <a asp-controller="Song" asp-action="Delete" asp-route-id="@Model.Song.Id"
                class="btn btn-danger btn-sm p-2" style="width: 8%">Delete</a>
             }
-            @if (Context.Session.GetString("Role") == "buyer")
+            @if (Model.Song.Bought == false && Context.Session.GetString("Role") == "buyer" && Model.Song.InCart == false)
             {
                 <button type="submit" class="btn btn-outline-secondary btn-sm">Add to cart</button>
             }

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SongTrade.Models
 {
@@ -29,5 +30,9 @@ namespace SongTrade.Models
         public string? DemoUrl { get; set; }
         [Display(Name = "Song Url")]
         public string SongUrl { get; set; }
+        [NotMapped]
+        public bool Bought { get; set; }
+        [NotMapped]
+        public bool InCart { get; set; }
     }
 }

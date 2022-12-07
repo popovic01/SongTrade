@@ -1,5 +1,4 @@
 ﻿@model SongTrade.Models.UserDto
-@Html.ValidationSummary()
 
 <form method="post">
     <div class="form-group">
@@ -21,6 +20,7 @@
         <label asp-for="ConfirmPassword"></label>
         <input asp-for="ConfirmPassword" required type="password" class="form-control">
         <span asp-for="ConfirmPassword" class="text-danger"></span>
+        <span id="passSpan" hidden class="text-danger">Passwords do not match</span>
     </div>
     <div class="form-group mb-2">
         <label asp-for="TypesOfUser"></label>
@@ -49,7 +49,7 @@
             var confirm = document.getElementById('ConfirmPassword').value
             if (password != confirm)
             {
-                alert('Passwords do not match')
+                document.getElementById('passSpan').hidden = false
                 e.preventDefault()
             }
         }

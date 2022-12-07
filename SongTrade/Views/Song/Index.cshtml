@@ -62,9 +62,23 @@
     <div class="row pb-3">
         @foreach (var song in Model.Songs)
         {
-            <div class="card m-2" style="width: 20rem; height: 250px">
+            <div class="card m-2" style="width: 24rem; height: 250px">
                 <div class="card-body">
-                    <h5 class="card-title">@song.Title</h5>
+                    <div class="row">
+                        <h5 class="card-title col-8 mt-1">@song.Title</h5>
+                        @if (song.Bought == true)
+                        {
+                            <div class="col-4 text-end m-0">
+                                <span class="badge bg-success">Bought</span>
+                            </div>
+                        }
+                        @if (song.InCart == true)
+                        {
+                            <div class="col-4 text-end m-0">
+                                <span class="badge bg-warning">In cart</span>
+                            </div>
+                        }
+                    </div>
                     <p class="card-text">
                         Author: <a asp-controller="Song" asp-action="GetByUser" asp-route-userId="@song.UserId"
                                class="card-link mb-2">@song.User.Username</a>

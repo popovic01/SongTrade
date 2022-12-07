@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using SongTrade.Auth;
 using SongTrade.DataAccess.Repository.IRepository;
 using SongTrade.Models;
+using SongTrade.Models.ViewModel;
 using SongTrade.Utility;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
@@ -40,7 +41,7 @@ namespace SongTrade.Controllers
 
             if (userFromDb != null)
             {
-                ModelState.AddModelError("Username.Name", "Username already exists");
+                ModelState.AddModelError("Username", "Username already exists");
                 return View(request);
             }
 
@@ -93,12 +94,12 @@ namespace SongTrade.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("User.Password", "Password is not correct");
+                    ModelState.AddModelError("Password", "Password is not correct");
                 }
             }
             else
             {
-                ModelState.AddModelError("User.Username", "Username doesn't exist");
+                ModelState.AddModelError("Username", "Username doesn't exist");
             }
 
             return View(request);
